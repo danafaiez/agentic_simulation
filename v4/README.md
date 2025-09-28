@@ -12,7 +12,7 @@
 - Handles large quantities with intelligent positioning
 
 ## Selective Deletion
-- [Add description here]
+- User can delete specific object
 
 # V4 Limitations
 

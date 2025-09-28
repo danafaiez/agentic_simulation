@@ -64,6 +64,3 @@
 
 ## No Object Selection
 - Manipulation operations work on "last created" object rather than specific selection
-
-## No Error Recovery
-- If Blender execution fails, user must restart the process
