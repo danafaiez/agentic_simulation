@@ -21,25 +21,20 @@
   - Saves Blender scene as "result.blend" file
 - Automatic Rendering
   - Generates PNG screenshots of the scene
-- Camera and Lighting Setup
-  - Automatically adds camera and sun light if missing
 
 # Limitations
 - No Natural Language Processing
-  - Requires navigating through multiple menu levels instead of simple commands
+  - Requires navigating through multiple steps instead of simple commands
 - Limited Object Types
   - Only supports 3 primitive shapes (cube, sphere, cylinder)
 - Basic Material System
-  - Only supports color changes, no advanced materials (metallic, glass, emission, etc.)
+  - Only supports adding colors, no advanced materials (metallic, glass, emission, etc.)
 - No Batch Operations
-  - Cannot create multiple objects in a single operation
+  - Cannot create multiple objects in a single operation. Must complete one operation before starting another
 - No Curves or Surfaces
-  - Limited to basic mesh primitives only
-- Hardcoded Blender Path
-  - Fixed to macOS installation path, not portable across systems
-- Sequential Workflow
-  - Must complete one operation before starting another
 - Limited Manipulation Options
   - Basic move/scale/rotate only, no advanced transformations
 - No Object Selection
   - Manipulation operations work on "last created" object rather than specific selection
+- Basic Camera Settings
+    - The camera does not adjust as objects move or are created in various coordinates and the saved PNG may not capture all objects 

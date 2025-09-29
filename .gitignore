@@ -1,0 +1,33 @@
+# Python files
+*.pyc
+__pycache__/
+
+# System files
+.DS_Store
+
+# Blender generated files (in any subfolder)
+*/objects.json
+*/result.blend
+*/result_render.png
+*/result_render_*.png
+*/*.blend1
+*/*.blend2
+
+# Version-specific Blender files
+v1/objects.json
+v1/object_registry.py
+v1/result.blend
+v1/result_render.png
+v2/objects.json
+v2/result.blend
+v2/result_render.png
+v3/objects.json
+v3/result.blend
+v3/result_render.png
+v4/objects.json
+v4/result.blend
+v4/result_render.png
+
+# Any session-specific files
+*/result_*.blend
+*/result_render_*.png
