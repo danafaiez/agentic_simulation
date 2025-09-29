@@ -15,7 +15,6 @@ __pycache__/
 
 # Version-specific Blender files
 v1/objects.json
-v1/object_registry.py
 v1/result.blend
 v1/result_render.png
 v2/objects.json
