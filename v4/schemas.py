@@ -37,6 +37,7 @@ class CurveCreation(BaseModel):
     material: Optional[MaterialProperties] = Field(default=None, description="Material properties")
 
 class SurfaceCreation(BaseModel):
+    print('*** SurfaceCreation ***')
     surface_type: Literal["extrude", "revolve", "plane", "grid"] = Field(description="Type of surface")
     name: str = Field(description="Unique name for the surface")
     base_curve: Optional[str] = Field(default=None, description="Name of curve to base surface on")
@@ -51,22 +52,23 @@ class SurfaceCreation(BaseModel):
     material: Optional[MaterialProperties] = Field(default=None, description="Material properties")
 
 class ObjectDeletion(BaseModel):
+    print('*** ObjectDeletion ***')
     action: Literal["delete_specific", "delete_all"] = Field(description="Type of deletion action")
     object_name: Optional[str] = Field(default=None, description="Name of object to delete (required for delete_specific)")
 
 class ObjectManipulation(BaseModel):
     manipulation_type: Literal["move", "scale", "rotate"] = Field(description="Type of manipulation to perform")
     object_name: str = Field(description="Name of object to manipulate")
-    move_x: Optional[float] = Field(default=None, description="X offset for move (relative)")
-    move_y: Optional[float] = Field(default=None, description="Y offset for move (relative)")
-    move_z: Optional[float] = Field(default=None, description="Z offset for move (relative)")
-    scale_x: Optional[float] = Field(default=None, description="X scale factor", gt=0)
-    scale_y: Optional[float] = Field(default=None, description="Y scale factor", gt=0)
-    scale_z: Optional[float] = Field(default=None, description="Z scale factor", gt=0)
+    move_x: Optional[float] = Field(default=1, description="X offset for move (relative)")
+    move_y: Optional[float] = Field(default=1, description="Y offset for move (relative)")
+    move_z: Optional[float] = Field(default=1, description="Z offset for move (relative)")
+    scale_x: Optional[float] = Field(default=1, description="X scale factor", gt=0)
+    scale_y: Optional[float] = Field(default=1, description="Y scale factor", gt=0)
+    scale_z: Optional[float] = Field(default=1, description="Z scale factor", gt=0)
     scale_uniform: Optional[float] = Field(default=None, description="Uniform scale factor", gt=0)
-    rotate_x: Optional[float] = Field(default=None, description="X rotation in degrees")
-    rotate_y: Optional[float] = Field(default=None, description="Y rotation in degrees")
-    rotate_z: Optional[float] = Field(default=None, description="Z rotation in degrees")
+    rotate_x: Optional[float] = Field(default=90, description="X rotation in degrees")
+    rotate_y: Optional[float] = Field(default=90, description="Y rotation in degrees")
+    rotate_z: Optional[float] = Field(default=90, description="Z rotation in degrees")
 
 class BatchCreation(BaseModel):
     objects: list[ObjectCreation] = Field(default_factory=list, description="List of objects to create")

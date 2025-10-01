@@ -97,15 +97,52 @@ class SchemaBlenderAgent:
 CURRENT OBJECTS IN SCENE: {current_objects}
 
 SUPPORTED ACTIONS:
-1. CREATE: "create", "make", "add" + single item (cube/sphere/cylinder/plane/grid/curve)
+1. CREATE: "create", "make", "add" + single item (cube/sphere/cylinder) - basic 3D objects
 2. CREATE_CURVE: "create curve", "make curve", "bezier curve", "spiral curve" + single curve
-3. CREATE_SURFACE: "create surface", "make surface", "create plane/grid" + single surface  
+3.  CREATE_SURFACE: "create surface", "create plane", "create grid" + single surface
+   - Use this for: plane, grid (NOT cubes/spheres/cylinders)
+   - If creating a grid and user doesn't specify subdivisions, always set subdivisions=1 (never None)
 4. BATCH_CREATE: Multiple items in one command
 5. LIST: "list", "show", "what objects" 
 6. DELETE: "delete", "remove" + object name OR "delete all"
 7. MANIPULATE: "move", "scale", "rotate" + object name + parameters
 8. VIEW: "view", "show scene", "open blender", "display scene"
 9. HELP: "help", "guide", "what can I do", "instructions"
+
+FOR CREATE ACTIONS:
+- object_type: Must be exactly "cube", "sphere", or "cylinder"
+- name: Generate a descriptive name if not provided that is not already used
+- location: Use coordinates if mentioned, default (0,0,0)
+- size: Default 1.0 if not specified
+- color: Convert color names to RGB. Example colors are: {color_info}
+- material: Optional material type - "metallic", "glass", "emission", "plastic", "rough" with properties:
+  * metallic: 0.0-1.0 (0=non-metal, 1=pure metal)
+  * roughness: 0.0-1.0 (0=mirror, 1=completely rough)
+  * emission_strength: 0+ (glow intensity)
+  * transparency: 0.0-1.0 (0=opaque, 1=transparent)
+
+FOR CREATE_CURVE ACTIONS:
+- curve_type: "bezier", "nurbs", or "poly" (poly for simple straight-line segments)
+- name: Generate descriptive curve name if not provided
+- control_points: Extract coordinates from user input, minimum 2 points required. For "spiral" curves, use empty list [] to generate automatically
+- extrude_depth: For 3D curves, default 0.0
+- bevel_depth: For rounded edges, default 0.0
+- resolution: Smoothness (1-64), default 12
+- dimensions: "2D" or "3D", default "3D"
+- color: IMPORTANT - Convert color names to RGB values using these presets: {color_info}
+- material: Same material options as objects
+
+FOR CREATE_SURFACE ACTIONS:
+- surface_type: "extrude", "revolve", "plane", or "grid"
+- name: Generate descriptive surface name if not provided
+- base_curve: Required for "extrude" and "revolve" types, must match existing curve
+- extrude_distance: For extrude surfaces, default 1.0
+- revolve_axis: X, Y, or Z axis for revolving, default "Z"
+- width/height: For plane/grid surfaces, default 2.0
+- subdivisions: For grid surfaces, default 1
+- color: Convert color names to RGB using presets: {color_info}
+- material: Same material options as objects
+
 
 FOR BATCH_CREATE ACTIONS (detect multiple items, quantities, or mixed requests):
 - Use when user mentions multiple objects: "create a red cube and blue sphere"
@@ -740,6 +777,72 @@ obj.scale.y = {surface.height}
 obj.scale.z = 1.0
 
 print(f"Created grid surface '{surface.name}' with {{obj.scale.x}}x{{obj.scale.y}} dimensions and {surface.subdivisions} subdivisions")
+'''
+        elif surface.surface_type == "extrude":
+            blender_code += f'''
+# Extrude curve to create surface
+base_curve_name = "{surface.base_curve}"
+if base_curve_name in bpy.data.objects:
+    base_curve = bpy.data.objects[base_curve_name]
+    
+    # Duplicate the curve for extrusion
+    bpy.context.view_layer.objects.active = base_curve
+    base_curve.select_set(True)
+    bpy.ops.object.duplicate()
+    
+    extruded_obj = bpy.context.active_object
+    extruded_obj.name = "{surface.name}"
+    
+    # Set extrusion depth
+    curve_data = extruded_obj.data
+    curve_data.extrude = {surface.extrude_distance}
+    curve_data.bevel_depth = 0.1  # Small bevel for better surface
+    
+    # Convert to mesh for better surface properties
+    bpy.context.view_layer.objects.active = extruded_obj
+    bpy.ops.object.convert(target='MESH')
+    
+    obj = extruded_obj
+    print(f"Created extruded surface '{surface.name}' from curve '{{base_curve_name}}' with distance {surface.extrude_distance}")
+else:
+    print(f"Error: Base curve '{{base_curve_name}}' not found")
+    obj = None
+'''
+
+        elif surface.surface_type == "revolve":
+            axis_map = {"X": (1, 0, 0), "Y": (0, 1, 0), "Z": (0, 0, 1)}
+            axis_vector = axis_map.get(surface.revolve_axis, (0, 0, 1))
+            
+            blender_code += f'''
+# Revolve curve around axis to create surface
+base_curve_name = "{surface.base_curve}"
+if base_curve_name in bpy.data.objects:
+    base_curve = bpy.data.objects[base_curve_name]
+    
+    # Duplicate the curve for revolving
+    bpy.context.view_layer.objects.active = base_curve
+    base_curve.select_set(True)
+    bpy.ops.object.duplicate()
+    
+    revolved_obj = bpy.context.active_object
+    revolved_obj.name = "{surface.name}"
+    
+    # Add screw modifier for revolving
+    screw_modifier = revolved_obj.modifiers.new(name="Screw", type='SCREW')
+    screw_modifier.axis = '{surface.revolve_axis}'
+    screw_modifier.angle = 6.28319  # 2*pi radians (360 degrees)
+    screw_modifier.steps = 16  # Number of steps around the revolution
+    screw_modifier.render_steps = 16
+    
+    # Apply the modifier to create the mesh
+    bpy.context.view_layer.objects.active = revolved_obj
+    bpy.ops.object.modifier_apply(modifier="Screw")
+    
+    obj = revolved_obj
+    print(f"Created revolved surface '{surface.name}' from curve '{{base_curve_name}}' around {surface.revolve_axis} axis")
+else:
+    print(f"Error: Base curve '{{base_curve_name}}' not found")
+    obj = None
 '''
 
         blender_code += f'''
