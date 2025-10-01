@@ -143,9 +143,9 @@ FOR DELETE ACTIONS:
 FOR MANIPULATE ACTIONS:
 - manipulation_type: "move", "scale", or "rotate"
 - object_name: Required, must match existing object
-- MOVE: move_x, move_y, move_z (relative offsets, default 0 if not specified)
-- SCALE: scale_uniform OR scale_x/scale_y/scale_z (scale factors, default 1.0 if not specified)
-- ROTATE: rotate_x, rotate_y, rotate_z (degrees, default 0 if not specified)
+- MOVE: move_x, move_y, move_z (relative offsets, default 1 if not specified)
+- SCALE: scale_uniform OR scale_x/scale_y/scale_z (scale factors, default 2.0 if not specified)
+- ROTATE: rotate_x, rotate_y, rotate_z (degrees, default 90 degrees if not specified)
 
 Examples:
 - "create red bezier curve from (0,0,0) to (2,2,2) to (4,0,0)" -> control_points=[[0,0,0], [2,2,2], [4,0,0]], color_r=1.0, color_g=0.0, color_b=0.0

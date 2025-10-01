@@ -62,18 +62,18 @@ class ObjectManipulation(BaseModel):
     manipulation_type: Literal["move", "scale", "rotate"] = Field(description="Type of manipulation to perform")
     object_name: str = Field(description="Name of object to manipulate")
     # Move parameters
-    move_x: Optional[float] = Field(default=None, description="X offset for move (relative)")
-    move_y: Optional[float] = Field(default=None, description="Y offset for move (relative)")
-    move_z: Optional[float] = Field(default=None, description="Z offset for move (relative)")
+    move_x: Optional[float] = Field(default=1, description="X offset for move (relative)")
+    move_y: Optional[float] = Field(default=1, description="Y offset for move (relative)")
+    move_z: Optional[float] = Field(default=1, description="Z offset for move (relative)")
     # Scale parameters
-    scale_x: Optional[float] = Field(default=None, description="X scale factor", gt=0)
-    scale_y: Optional[float] = Field(default=None, description="Y scale factor", gt=0)
-    scale_z: Optional[float] = Field(default=None, description="Z scale factor", gt=0)
-    scale_uniform: Optional[float] = Field(default=None, description="Uniform scale factor", gt=0)
+    scale_x: Optional[float] = Field(default=1, description="X scale factor", gt=0)
+    scale_y: Optional[float] = Field(default=1, description="Y scale factor", gt=0)
+    scale_z: Optional[float] = Field(default=1, description="Z scale factor", gt=0)
+    scale_uniform: Optional[float] = Field(default=2, description="Uniform scale factor", gt=0)
     # Rotate parameters (in degrees)
-    rotate_x: Optional[float] = Field(default=None, description="X rotation in degrees")
-    rotate_y: Optional[float] = Field(default=None, description="Y rotation in degrees")
-    rotate_z: Optional[float] = Field(default=None, description="Z rotation in degrees")
+    rotate_x: Optional[float] = Field(default=90, description="X rotation in degrees")
+    rotate_y: Optional[float] = Field(default=90, description="Y rotation in degrees")
+    rotate_z: Optional[float] = Field(default=90, description="Z rotation in degrees")
 
 class ActionRequest(BaseModel):
     action_type: Literal["create", "create_curve", "create_surface", "list", "delete", "manipulate", "view", "help"] = Field(description="Type of action requested")
